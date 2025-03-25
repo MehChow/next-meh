@@ -1,6 +1,7 @@
+import useAuthStore from "@/store/auth-store";
 import axios from "axios";
 
-const api = axios.create({
+const apiClient = axios.create({
   baseURL: "http://localhost:5216",
   timeout: 10000,
   withCredentials: true,
@@ -9,19 +10,32 @@ const api = axios.create({
   },
 });
 
-api.interceptors.request.use(
+apiClient.interceptors.request.use(
   (config) => {
+    // Append token automatically
+    const accessToken = useAuthStore.getState().accessToken;
+    if (accessToken) {
+      config.headers["Authorization"] = `Bearer ${accessToken}`;
+    }
+
     return config;
   },
   (error) => Promise.reject(error)
 );
 
-api.interceptors.response.use(
+apiClient.interceptors.response.use(
   (response) => {
     console.log({ response });
     return response;
   },
-  (error) => Promise.reject(error)
+  (error) => {
+    if (error.response?.status === 401) {
+      console.log("You are UNAUTHORIZED!!!");
+      try {
+      } catch (error) {}
+    }
+    return Promise.reject(error);
+  }
 );
 
-export default api;
+export default apiClient;

@@ -6,7 +6,7 @@ export default function Auth() {
   return (
     <div className="flex items-center justify-center h-screen">
       <Tabs defaultValue="Login" className="fixed w-[500px]">
-        <TabsList className="w-full mb-2">
+        <TabsList className="w-full mb-2 bg-slate-300">
           <TabsTrigger value="Login">Login</TabsTrigger>
           <TabsTrigger value="Register">Register</TabsTrigger>
         </TabsList>
