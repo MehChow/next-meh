@@ -3,7 +3,7 @@
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
 import { signInSchema, SignInSchema } from "@/schema/auth-schema";
-import apiHandler from "@/lib/axios";
+import { useRouter } from "next/navigation";
 
 import { Button } from "@/components/ui/button";
 import {
@@ -15,8 +15,11 @@ import {
   FormMessage,
 } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
+import authService from "@/services/authService";
 
 export function SignInForm() {
+  const router = useRouter();
+
   const form = useForm<SignInSchema>({
     resolver: zodResolver(signInSchema),
     defaultValues: {
@@ -26,7 +29,15 @@ export function SignInForm() {
   });
 
   const onSubmit = async (values: SignInSchema) => {
-    const res = await apiHandler.post("/api/auth/login", values);
+    try {
+      const response = await authService.login(values);
+      if (response.accessToken) {
+        router.push("/dashboard");
+      }
+    } catch (error) {
+      // TODO: show message to user
+      console.log("LOGIN FAILED!!!", error);
+    }
   };
 
   return (
@@ -57,10 +68,7 @@ export function SignInForm() {
             <FormItem>
               <FormLabel className="text-white">Password</FormLabel>
               <FormControl>
-                <Input
-                  {...field}
-                  className="caret-white text-white border-slate-800"
-                />
+                <Input {...field} className="caret-white text-white border-slate-800" />
               </FormControl>
               <FormMessage />
             </FormItem>
