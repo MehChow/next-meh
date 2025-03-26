@@ -1,4 +1,5 @@
 import apiClient from "@/lib/axios";
+import authModel from "@/model/auth";
 
 interface SignInRequest {
   username: string;
@@ -28,14 +29,11 @@ const authService = {
     const response = await apiClient.post("/api/auth/refresh-token", undefined, {
       headers,
     });
+
     return response.data;
   },
   // Auth health check
-  authCheck: async () => {
-    const response = await apiClient.get("/api/auth");
-    console.log({ response });
-    return response.data;
-  },
+  authCheck: async () => authModel.authCheck(),
 };
 
 export default authService;

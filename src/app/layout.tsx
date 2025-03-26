@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import { Tektur } from "next/font/google";
+import { Toaster } from "@/components/ui/sonner";
 import "./globals.css";
 
 const tektur = Tektur({ subsets: ["latin"] });
@@ -16,7 +17,9 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en">
-      <body className={tektur.className}>{children}</body>
+      <body className={tektur.className}>
+        {children} <Toaster />
+      </body>
     </html>
   );
 }
