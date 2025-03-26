@@ -1,8 +1,8 @@
-import authService from "@/services/authService";
+import authService from "@/services/auth-service";
 import axios from "axios";
 
 const apiClient = axios.create({
-  baseURL: "http://localhost:5216",
+  baseURL: process.env.NEXT_PUBLIC_API_BASE_URL,
   timeout: 10000,
   // Sending cookies automatically with each request
   withCredentials: true,
