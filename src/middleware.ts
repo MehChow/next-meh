@@ -1,7 +1,7 @@
 import { NextResponse } from "next/server";
 import type { NextRequest } from "next/server";
 import { jwtVerify } from "jose";
-import authModel from "./model/auth-model";
+import authApi from "@/services/auth-api";
 
 // Handle refreshing the access token
 async function refreshAccessToken(request: NextRequest): Promise<string | undefined> {
@@ -15,7 +15,7 @@ async function refreshAccessToken(request: NextRequest): Promise<string | undefi
     }
 
     // Step 2: Refresh the access token using the found refreshToken
-    const { accessToken: newAccessToken } = await authModel.refreshAccessToken(refreshToken);
+    const { accessToken: newAccessToken } = await authApi.refreshAccessToken(refreshToken);
     if (!newAccessToken) {
       console.log("Failed to get the new access token. LOG THE FK OUT!!");
       return undefined;

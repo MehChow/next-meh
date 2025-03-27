@@ -1,19 +1,11 @@
 import apiClient from "@/lib/axios";
 import { SignInRequest, SignInResponse } from "@/types/auth";
-import { toast } from "sonner";
 
-const authModel = {
-  // Auth test check
+const authApi = {
   authCheck: async () => {
     const response = await apiClient.get("/api/auth");
-    if (response.status === 200) {
-      toast.success("You are authenticated!!");
-    }
+    return response.status === 200;
   },
-  /* Manually attach the refreshToken to header here, because this API will be called
-    inside NextJs's middleware, which is in a server context, and axios will not
-    automatically send cookies even though withCredentials is set to true
-    */
   refreshAccessToken: async (refreshToken?: string): Promise<SignInResponse> => {
     const headers: Record<string, string> = {};
     if (refreshToken) {
@@ -35,4 +27,4 @@ const authModel = {
   },
 };
 
-export default authModel;
+export default authApi;
