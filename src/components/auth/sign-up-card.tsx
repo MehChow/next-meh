@@ -1,16 +1,16 @@
-import SignInForm from "./sign-in-form";
 import CardWrapper from "./shared/card-wrapper";
 import Separator from "./shared/separator";
 import SocialLogin from "./shared/social-login";
+import SignUpForm from "./sign-up-form";
 
-export function SignInCard() {
+export function SignUpCard() {
   return (
-    <CardWrapper title="Sign In" gradient="signin-card">
-      <SignInForm />
+    <CardWrapper title="Sign Up" gradient="signup-card">
+      <SignUpForm />
       <Separator />
       <SocialLogin />
     </CardWrapper>
   );
 }
 
-export default SignInCard;
+export default SignUpCard;

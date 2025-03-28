@@ -1,3 +1,4 @@
+import Logo from "@/components/logo";
 import type { Metadata } from "next";
 import Image from "next/image";
 
@@ -13,6 +14,7 @@ export default function AuthLayout({
 }>) {
   return (
     <div className="h-screen bg-black">
+      <Logo color="text-white" paddingTop="pt-3" />
       <Image
         src="/auth-background.jpg"
         alt="auth-background"

@@ -1,12 +1,24 @@
 import apiClient from "@/lib/axios";
-import { SignInRequest, SignInResponse } from "@/types/auth";
+import { AuthRequest, AuthResponse, RefreshTokenResponse } from "@/types/auth";
 
 const authApi = {
   authCheck: async () => {
     const response = await apiClient.get("/api/auth");
     return response.status === 200;
   },
-  refreshAccessToken: async (refreshToken?: string): Promise<SignInResponse> => {
+  register: async (data: AuthRequest): Promise<AuthResponse> => {
+    const response = await apiClient.post("/api/auth/register", data);
+    return response.data;
+  },
+  login: async (data: AuthRequest): Promise<AuthResponse> => {
+    const response = await apiClient.post("/api/auth/login", data);
+    return response.data;
+  },
+  logout: async () => {
+    const response = await apiClient.post("/api/auth/logout");
+    return response.data;
+  },
+  refreshAccessToken: async (refreshToken?: string): Promise<RefreshTokenResponse> => {
     const headers: Record<string, string> = {};
     if (refreshToken) {
       headers["Cookie"] = `refreshToken=${refreshToken}`;
@@ -17,12 +29,8 @@ const authApi = {
 
     return response.data;
   },
-  login: async (data: SignInRequest): Promise<SignInResponse> => {
-    const response = await apiClient.post("/api/auth/login", data);
-    return response.data;
-  },
-  logout: async () => {
-    const response = await apiClient.post("/api/auth/logout");
+  getUser: async () => {
+    const response = await apiClient.get("/api/auth/get-userinfo");
     return response.data;
   },
 };

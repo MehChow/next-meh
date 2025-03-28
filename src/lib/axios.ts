@@ -37,8 +37,8 @@ apiClient.interceptors.response.use(
 
         // Handle refresh access token for API request
         try {
-          const { accessToken } = await authApi.refreshAccessToken();
-          if (!accessToken) {
+          const { tokenResponse } = await authApi.refreshAccessToken();
+          if (!tokenResponse.accessToken) {
             console.log("AXIOS: Failed to refresh access token");
             return Promise.reject(error);
           }

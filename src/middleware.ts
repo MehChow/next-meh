@@ -15,15 +15,15 @@ async function refreshAccessToken(request: NextRequest): Promise<string | undefi
     }
 
     // Step 2: Refresh the access token using the found refreshToken
-    const { accessToken: newAccessToken } = await authApi.refreshAccessToken(refreshToken);
-    if (!newAccessToken) {
+    const { tokenResponse } = await authApi.refreshAccessToken(refreshToken);
+    if (!tokenResponse.accessToken) {
       console.log("Failed to get the new access token. LOG THE FK OUT!!");
       return undefined;
     }
 
     // Step 3: Return the new access token
     console.log("Successfully got the new access token!!!");
-    return newAccessToken;
+    return tokenResponse.accessToken;
   } catch (error) {
     console.log("Error refreshing access token WTF?");
     return undefined;
@@ -99,5 +99,5 @@ export async function middleware(request: NextRequest) {
 
 // Configure which routes the middleware applies to
 export const config = {
-  matcher: ["/dashboard/:path*"], // Only run middleware for /dashboard and its subpaths
+  matcher: ["/dashboard/:path*", "/"], // Only run middleware for /dashboard and its subpaths
 };

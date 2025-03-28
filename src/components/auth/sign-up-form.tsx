@@ -2,7 +2,7 @@
 
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
-import { signInSchema, SignInSchema } from "@/schema/auth-schema";
+import { signUpSchema, SignUpSchema } from "@/schema/auth-schema";
 import { useRouter } from "next/navigation";
 
 import { Button } from "@/components/ui/button";
@@ -16,32 +16,29 @@ import {
 } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
 import authService from "@/services/auth-api";
-import useUserStore from "@/store/user-store";
 
-export function SignInForm() {
+export function SignUpForm() {
   const router = useRouter();
-  const { setUser } = useUserStore();
 
-  const form = useForm<SignInSchema>({
-    resolver: zodResolver(signInSchema),
+  const form = useForm<SignUpSchema>({
+    resolver: zodResolver(signUpSchema),
     defaultValues: {
       username: "",
       password: "",
+      confirmPassword: "",
     },
   });
 
-  const onSubmit = async (values: SignInSchema) => {
+  const onSubmit = async (values: SignUpSchema) => {
     try {
-      const response = await authService.login(values);
+      const { username, password } = values;
+      const response = await authService.register({ username, password });
 
-      // accessToken exists in tokenResponse, meaning login was successful,
-      // proceed to set userInfo in Zustand store
       if (response.tokenResponse.accessToken) {
-        setUser(response.userResponse);
         router.replace("/");
       }
     } catch (error) {
-      console.log("LOGIN FAILED!!!", error);
+      console.log("REGISTER FAILED!!!", error);
     }
   };
 
@@ -73,11 +70,21 @@ export function SignInForm() {
             <FormItem>
               <FormLabel className="text-white">Password</FormLabel>
               <FormControl>
-                <Input
-                  {...field}
-                  className="caret-white text-white border-slate-800"
-                  type="password"
-                />
+                <Input {...field} className="caret-white text-white border-slate-800" />
+              </FormControl>
+              <FormMessage />
+            </FormItem>
+          )}
+        />
+
+        <FormField
+          control={form.control}
+          name="confirmPassword"
+          render={({ field }) => (
+            <FormItem>
+              <FormLabel className="text-white">Confirm Password</FormLabel>
+              <FormControl>
+                <Input {...field} className="caret-white text-white border-slate-800" />
               </FormControl>
               <FormMessage />
             </FormItem>
@@ -92,4 +99,4 @@ export function SignInForm() {
   );
 }
 
-export default SignInForm;
+export default SignUpForm;
