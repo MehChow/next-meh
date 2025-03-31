@@ -28,7 +28,7 @@ apiClient.interceptors.response.use(
 
       // Handle 400 error cases:
       if (status === 400) {
-        toast.error(errorMessage);
+        console.error("AXIOS 400 ERROR CAUGHT!!", errorMessage);
         return Promise.reject({ status, message: errorMessage });
       } else if (status === 401 && errorMessage !== "INVALID_REFRESH_TOKEN") {
         /* Handle 401 errors. If the error is not INVALID_REFRESH_TOKEN, attempt to refresh
@@ -37,8 +37,9 @@ apiClient.interceptors.response.use(
 
         // Handle refresh access token for API request
         try {
-          const { tokenResponse } = await authApi.refreshAccessToken();
-          if (!tokenResponse.accessToken) {
+          console.log("NOW GO REFRESH!!");
+          const tokenResponse = await authApi.refreshAccessToken();
+          if (!tokenResponse.data.accessToken) {
             console.log("AXIOS: Failed to refresh access token");
             return Promise.reject(error);
           }
@@ -47,9 +48,6 @@ apiClient.interceptors.response.use(
           return apiClient.request(error.config);
         } catch (refreshError) {
           console.error("AXIOS: Refresh token failed:", refreshError);
-          if (typeof window !== "undefined") {
-            window.location.href = "/auth";
-          }
           return Promise.reject(refreshError);
         }
       }

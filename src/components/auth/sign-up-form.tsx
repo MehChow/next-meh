@@ -16,9 +16,11 @@ import {
 } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
 import authService from "@/services/auth-api";
+import useUserStore from "@/store/user-store";
 
 export function SignUpForm() {
   const router = useRouter();
+  const { setUser } = useUserStore();
 
   const form = useForm<SignUpSchema>({
     resolver: zodResolver(signUpSchema),
@@ -35,6 +37,7 @@ export function SignUpForm() {
       const response = await authService.register({ username, password });
 
       if (response.tokenResponse.accessToken) {
+        setUser(response.userResponse);
         router.replace("/");
       }
     } catch (error) {

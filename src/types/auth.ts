@@ -15,9 +15,3 @@ export interface AuthResponse {
   };
   userResponse: User;
 }
-
-export interface RefreshTokenResponse {
-  tokenResponse: {
-    accessToken: string;
-  };
-}

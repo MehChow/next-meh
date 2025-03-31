@@ -4,7 +4,7 @@ import { jwtVerify } from "jose";
 import authApi from "@/services/auth-api";
 
 // Handle refreshing the access token
-async function refreshAccessToken(request: NextRequest): Promise<string | undefined> {
+async function refreshAccessToken(request: NextRequest) {
   try {
     // Step 1: Locate the refreshToken in cookies
     const refreshToken = request.cookies.get("refreshToken")?.value;
@@ -15,15 +15,15 @@ async function refreshAccessToken(request: NextRequest): Promise<string | undefi
     }
 
     // Step 2: Refresh the access token using the found refreshToken
-    const { tokenResponse } = await authApi.refreshAccessToken(refreshToken);
-    if (!tokenResponse.accessToken) {
+    const response = await authApi.refreshAccessToken(refreshToken);
+    if (!response.data.accessToken) {
       console.log("Failed to get the new access token. LOG THE FK OUT!!");
       return undefined;
     }
 
     // Step 3: Return the new access token
     console.log("Successfully got the new access token!!!");
-    return tokenResponse.accessToken;
+    return response.data.accessToken;
   } catch (error) {
     console.log("Error refreshing access token WTF?");
     return undefined;

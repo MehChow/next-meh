@@ -1,5 +1,6 @@
 import apiClient from "@/lib/axios";
-import { AuthRequest, AuthResponse, RefreshTokenResponse } from "@/types/auth";
+import { AuthRequest, AuthResponse } from "@/types/auth";
+import { AxiosResponse } from "axios";
 
 const authApi = {
   authCheck: async () => {
@@ -18,7 +19,7 @@ const authApi = {
     const response = await apiClient.post("/api/auth/logout");
     return response.data;
   },
-  refreshAccessToken: async (refreshToken?: string): Promise<RefreshTokenResponse> => {
+  refreshAccessToken: async (refreshToken?: string): Promise<AxiosResponse<any, any>> => {
     const headers: Record<string, string> = {};
     if (refreshToken) {
       headers["Cookie"] = `refreshToken=${refreshToken}`;
@@ -27,7 +28,7 @@ const authApi = {
       headers,
     });
 
-    return response.data;
+    return response;
   },
   getUser: async () => {
     const response = await apiClient.get("/api/auth/get-userinfo");

@@ -4,29 +4,29 @@ import { create } from "zustand";
 
 interface UserState {
   user: User | null;
-  authStatus: "IDLE" | "LOADING" | "AUTHED" | "UNAUTHED";
+  isLoading: boolean;
   setUser: (user: User) => void;
-  fetchUser: () => Promise<void>;
   clearUser: () => void;
+  fetchUser: () => Promise<void>;
 }
 
-export const useUserStore = create<UserState>((set) => {
-  return {
-    user: null,
-    authStatus: "IDLE",
-    setUser: (user) => set({ user, authStatus: "AUTHED" }),
-    fetchUser: async () => {
-      set({ authStatus: "LOADING" });
-      try {
-        const user = await authApi.getUser();
-        set({ user, authStatus: "AUTHED" });
-      } catch (error) {
-        console.error("Failed to fetch user:", error);
-        set({ authStatus: "UNAUTHED" });
-      }
-    },
-    clearUser: () => set({ user: null, authStatus: "UNAUTHED" }),
-  };
-});
+export const useUserStore = create<UserState>()((set) => ({
+  user: null,
+  isLoading: true,
+  setUser: (user) => set({ user }),
+  clearUser: () => set({ user: null }),
+  fetchUser: async () => {
+    set({ isLoading: true });
+
+    try {
+      const user = await authApi.getUser();
+      set({ user });
+    } catch (error) {
+      console.log("Not logged in, or both tokens are expired");
+    } finally {
+      set({ isLoading: false });
+    }
+  },
+}));
 
 export default useUserStore;
