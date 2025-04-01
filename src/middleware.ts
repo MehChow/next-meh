@@ -1,34 +1,7 @@
 import { NextResponse } from "next/server";
 import type { NextRequest } from "next/server";
+import authApi from "./services/auth-api";
 import { jwtVerify } from "jose";
-import authApi from "@/services/auth-api";
-
-// Handle refreshing the access token
-async function refreshAccessToken(request: NextRequest) {
-  try {
-    // Step 1: Locate the refreshToken in cookies
-    const refreshToken = request.cookies.get("refreshToken")?.value;
-    console.log("Refresh token found:", refreshToken);
-    if (!refreshToken) {
-      console.log("No refresh token found, cannot refresh access token.");
-      return undefined;
-    }
-
-    // Step 2: Refresh the access token using the found refreshToken
-    const response = await authApi.refreshAccessToken(refreshToken);
-    if (!response.data.accessToken) {
-      console.log("Failed to get the new access token. LOG THE FK OUT!!");
-      return undefined;
-    }
-
-    // Step 3: Return the new access token
-    console.log("Successfully got the new access token!!!");
-    return response.data.accessToken;
-  } catch (error) {
-    console.log("Error refreshing access token WTF?");
-    return undefined;
-  }
-}
 
 export async function middleware(request: NextRequest) {
   const pathname = request.nextUrl.pathname;
@@ -39,16 +12,14 @@ export async function middleware(request: NextRequest) {
     return NextResponse.next();
   }
 
-  // When the user visits a protected route, check if the accessToken exists
+  console.log("HEY!!! THIS IS PROTECTED!!");
   let accessToken = request.cookies.get("accessToken")?.value;
-  // Check for the jwt secret existence
   const secret = new TextEncoder().encode(process.env.JWT_TOKEN_SECRET);
   if (!process.env.JWT_TOKEN_SECRET) {
     console.error("JWT_TOKEN_SECRET is not set!");
     return NextResponse.redirect(new URL("/auth", request.url));
   }
 
-  // Try to verify the accessToken if it exists
   let isTokenValid = false;
   if (accessToken) {
     try {
@@ -61,43 +32,69 @@ export async function middleware(request: NextRequest) {
     }
   }
 
-  // If the token is missing or invalid, try to refresh.
-  // Handle refresh access token for page navigating
   if (!isTokenValid) {
-    console.log("Access token missing or invalid, attempting to refresh...");
-    accessToken = await refreshAccessToken(request);
-
-    if (!accessToken) {
-      console.log("Refresh failed, redirecting to /auth");
+    console.log("Token is invalid or expired, proceed to refresh");
+    const newTokens = await refreshAccessToken(request);
+    if (!newTokens?.accessToken || !newTokens?.refreshToken) {
+      console.log("Failed to refresh access token, redirecting to login");
       return NextResponse.redirect(new URL("/auth", request.url));
     }
 
-    // Set the new accessToken as a cookie
     const response = NextResponse.next();
-    response.cookies.set("accessToken", accessToken, {
+    response.cookies.set("accessToken", newTokens.accessToken, {
       httpOnly: true,
       secure: false, // Use true in production with HTTPS
       sameSite: "strict",
       // Remember set the expires time ALIGNED with the backend!!
       expires: new Date(Date.now() + 15 * 60 * 1000), // 15 minutes expiration
     });
-    console.log("New access token generated and set as cookie!!");
 
-    // Verify the new token
-    try {
-      await jwtVerify(accessToken, secret);
-      console.log("New access token verified!! Proceeding to protected route");
-      return response;
-    } catch (error: any) {
-      console.log("New access token verification failed:", error.message);
-      return NextResponse.redirect(new URL("/auth", request.url));
-    }
+    response.cookies.set("refreshToken", newTokens.refreshToken, {
+      httpOnly: true,
+      secure: false, // Use true in production with HTTPS
+      sameSite: "strict",
+      // Remember set the expires time ALIGNED with the backend!!
+      expires: new Date(Date.now() + 7 * 24 * 60 * 60 * 1000), // 7 days expiration
+    });
+    return response;
   }
-
   return NextResponse.next();
+}
+
+async function refreshAccessToken(request: NextRequest) {
+  try {
+    // Step 1: Locate the refreshToken in cookies
+    const refreshToken = request.cookies.get("refreshToken")?.value;
+    console.log("Refresh token found:", refreshToken);
+    if (!refreshToken) {
+      console.log("No refresh token found, cannot refresh access token.");
+      return undefined;
+    }
+
+    // Step 2: Refresh the access token using the found refreshToken
+    const response = await authApi.refreshAccessToken(refreshToken);
+    console.log("Refreshed access token:", response.accessToken);
+    console.log("Refreshed refresh token:", response.refreshToken);
+
+    if (!response.accessToken) {
+      console.log("Failed to get the new access token. LOG THE FK OUT!!");
+      return undefined;
+    }
+
+    // Step 3: Return the new access token
+    console.log("Successfully got the new access token!!!");
+    return response;
+  } catch (error: any) {
+    if (error.response?.status === 400) {
+      console.log("Invalid refresh token (400), refresh failed");
+    } else {
+      console.error("Error refreshing access token:", error.message);
+    }
+    return undefined;
+  }
 }
 
 // Configure which routes the middleware applies to
 export const config = {
-  matcher: ["/dashboard/:path*", "/"], // Only run middleware for /dashboard and its subpaths
+  matcher: ["/dashboard/:path*"], // Only run middleware for /dashboard and its subpaths
 };

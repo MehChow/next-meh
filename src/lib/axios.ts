@@ -1,11 +1,9 @@
 import authApi from "@/services/auth-api";
 import axios from "axios";
-import { toast } from "sonner";
 
 const apiClient = axios.create({
   baseURL: process.env.NEXT_PUBLIC_API_BASE_URL,
   timeout: 10000,
-  // Sending cookies automatically with each request
   withCredentials: true,
   headers: { "Content-Type": "application/json" },
 });
@@ -21,6 +19,7 @@ const getErrorMessage = (error: any) => {
 apiClient.interceptors.response.use(
   (response) => response,
   async (error) => {
+    console.log(error.config);
     if (error.response) {
       // get error info
       const { status } = error.response;
@@ -38,13 +37,15 @@ apiClient.interceptors.response.use(
         // Handle refresh access token for API request
         try {
           console.log("NOW GO REFRESH!!");
+
           const tokenResponse = await authApi.refreshAccessToken();
-          if (!tokenResponse.data.accessToken) {
+          if (!tokenResponse.accessToken) {
             console.log("AXIOS: Failed to refresh access token");
             return Promise.reject(error);
           }
 
           // If success, retry the request
+          console.log("AXIOS: Refreshed access token, now retry request");
           return apiClient.request(error.config);
         } catch (refreshError) {
           console.error("AXIOS: Refresh token failed:", refreshError);
@@ -53,7 +54,6 @@ apiClient.interceptors.response.use(
       }
     }
 
-    toast.error("A network error occurred. Please check your connection and try again.");
     return Promise.reject(error);
   }
 );

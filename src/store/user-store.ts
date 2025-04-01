@@ -20,6 +20,7 @@ export const useUserStore = create<UserState>()((set) => ({
 
     try {
       const user = await authApi.getUser();
+      console.log({ user });
       set({ user });
     } catch (error) {
       console.log("Not logged in, or both tokens are expired");
