@@ -73,8 +73,6 @@ async function refreshAccessToken(request: NextRequest) {
 
     // Step 2: Refresh the access token using the found refreshToken
     const response = await authApi.refreshAccessToken(refreshToken);
-    console.log("Refreshed access token:", response.accessToken);
-    console.log("Refreshed refresh token:", response.refreshToken);
 
     if (!response.accessToken) {
       console.log("Failed to get the new access token. LOG THE FK OUT!!");
