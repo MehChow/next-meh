@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import NavBar from "@/components/nav-bar";
 import Logo from "@/components/logo";
 import AuthBlock from "@/components/auth-block";
+import Background from "@/components/main/background";
 
 export const metadata: Metadata = {
   title: "Create Next App",
@@ -14,13 +15,14 @@ export default function HomeLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <div className="min-h-lvh bg-orange-100">
-      <header className="flex items-center justify-center top-0 bg-white/40 h-24 sticky w-full backdrop-blur-sm z-99">
-        <Logo />
+    <div className="min-h-lvh bg-black justify-center items-center flex flex-col">
+      <header className="flex items-center justify-center top-0 bg-transparent h-24 sticky w-full backdrop-blur-sm z-99">
+        <Logo color="text-white" />
         <NavBar />
         <AuthBlock />
       </header>
 
+      <Background />
       {children}
     </div>
   );

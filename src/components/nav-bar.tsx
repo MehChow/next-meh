@@ -57,7 +57,7 @@ export function NavBar() {
       <NavigationMenuList>
         {/* First block */}
         <NavigationMenuItem>
-          <NavigationMenuTrigger className="bg-transparent text-lg">
+          <NavigationMenuTrigger className="bg-transparent text-lg text-white">
             Getting started
           </NavigationMenuTrigger>
           <NavigationMenuContent>
@@ -91,7 +91,7 @@ export function NavBar() {
 
         {/* Second block */}
         <NavigationMenuItem>
-          <NavigationMenuTrigger className="bg-transparent text-lg">
+          <NavigationMenuTrigger className="bg-transparent text-lg text-white">
             Components
           </NavigationMenuTrigger>
           <NavigationMenuContent>
@@ -109,7 +109,7 @@ export function NavBar() {
         <NavigationMenuItem>
           <Link href="/docs" legacyBehavior passHref>
             <NavigationMenuLink
-              className={navigationMenuTriggerStyle() + " bg-transparent text-lg"}
+              className={navigationMenuTriggerStyle() + " bg-transparent text-lg text-white"}
             >
               Documentation
             </NavigationMenuLink>

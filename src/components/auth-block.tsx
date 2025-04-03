@@ -37,7 +37,7 @@ export function AuthBlock() {
 
   if (user) {
     return (
-      <div className="absolute right-0 pr-6 flex gap-8">
+      <div className="absolute right-0 pr-6 flex gap-8 text-white">
         <Link href="/dashboard" className="hover:opacity-80 transition flex items-center gap-2">
           {user.username}
         </Link>
@@ -62,7 +62,7 @@ export function AuthBlock() {
     );
   } else {
     return (
-      <div className="absolute right-0 pr-6 flex gap-8">
+      <div className="absolute right-0 pr-6 flex gap-8 text-white">
         <Link
           href="/auth?tab=Login"
           className="hover:opacity-80 transition flex items-center gap-2"

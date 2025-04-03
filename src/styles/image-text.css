@@ -1,0 +1,41 @@
+.title {
+  font-size: 14rem; /* Large font size like in the image */
+  font-weight: 900; /* Extra bold */
+  text-transform: uppercase; /* Match the uppercase style */
+  background: url("/image-swiper/herta_main.jpg") no-repeat center center; /* Path to your image */
+  background-size: cover; /* Ensure the image covers the text */
+  color: transparent; /* Make text transparent to show the background */
+  -webkit-background-clip: text; /* Clip the background to the text shape (for Webkit browsers) */
+  background-clip: text; /* Standard property */
+  letter-spacing: 2rem;
+  transition: all 0.3s ease;
+  animation: fadeInAndMove 1.75s ease-in-out forwards;
+
+  @media (max-width: 1792px) {
+    font-size: 10rem;
+  }
+
+  @media (max-width: 1280px) {
+    letter-spacing: 12px;
+    font-size: 6rem;
+  }
+}
+
+@keyframes fadeInAndMove {
+  0% {
+    opacity: 0;
+    transform: translateY(0); /* Start at original position */
+  }
+  40% {
+    opacity: 1; /* Fade in complete at 50% of animation duration (1s) */
+    transform: translateY(0); /* Stay in place during the wait */
+  }
+  60% {
+    opacity: 1; /* Hold opacity 1 during the 0.5s wait */
+    transform: translateY(0); /* Still no movement */
+  }
+  100% {
+    opacity: 1; /* Remain fully visible */
+    transform: translateY(-20rem); /* Move up slightly (adjust as needed) */
+  }
+}
