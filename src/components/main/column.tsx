@@ -4,7 +4,7 @@ import "@/styles/lenis.css";
 
 interface ColumnProps {
   images: string[];
-  y: number;
+  y: any;
 }
 
 export function Column({ images, y = 0 }: ColumnProps) {

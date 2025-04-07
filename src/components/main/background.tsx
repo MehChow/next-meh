@@ -3,13 +3,15 @@ import "@/styles/main-background.css";
 
 export function Background() {
   return (
-    <Image
-      src="/main-bg.avif"
-      alt="bg-image"
-      fill={true}
-      priority
-      className="object-cover main-background"
-    />
+    <div className="background-wrapper">
+      <Image
+        src="/main-bg.jpg"
+        alt="bg-image"
+        fill={true}
+        priority
+        className="absolute object-cover main-background"
+      />
+    </div>
   );
 }
 

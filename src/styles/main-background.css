@@ -1,8 +1,32 @@
-.main-background {
-  opacity: 0;
+.background-wrapper {
+  position: absolute; /* or fixed, depending on your preference */
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%; /* Matches the parent container or viewport */
   z-index: 0;
   animation: fadeIn 0.5s ease-out forwards;
-  animation-delay: 1.5s;
+}
+
+.main-background {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  mask-image: linear-gradient(
+    to bottom,
+    rgba(0, 0, 0, 1) 0%,
+    /* Fully opaque at the top */ rgba(0, 0, 0, 1) 70%,
+    /* Stays opaque until 70% */ rgba(0, 0, 0, 0) 100% /* Fully transparent at the bottom */
+  );
+  -webkit-mask-image: linear-gradient(
+    to bottom,
+    rgba(0, 0, 0, 1) 0%,
+    rgba(0, 0, 0, 1) 70%,
+    rgba(0, 0, 0, 0) 100%
+  ); /* For broader browser support */
 }
 
 @keyframes fadeIn {
@@ -10,6 +34,6 @@
     opacity: 0;
   }
   100% {
-    opacity: 0.3;
+    opacity: 0.3; /* Final opacity of the image */
   }
 }

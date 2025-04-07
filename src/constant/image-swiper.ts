@@ -24,9 +24,9 @@ export const allImages = [
   "/image-swiper/rappa.png",
   "/image-swiper/ruanmei.png",
   "/image-swiper/bird.png",
-  "/image-swiper/bronya.png",
   "/image-swiper/lingsha.png",
-  "/image-swiper/huohuo.png",
+  "/image-swiper/bronya.png",
   "/image-swiper/sushang.png",
+  "/image-swiper/huohuo.png",
   "/image-swiper/feixiao.png",
 ];
