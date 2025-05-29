@@ -5,7 +5,7 @@ export function Background() {
   return (
     <div className="background-wrapper">
       <Image
-        src="/main-bg.jpg"
+        src="/chisato.png"
         alt="bg-image"
         fill={true}
         priority

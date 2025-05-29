@@ -19,7 +19,8 @@
     to bottom,
     rgba(0, 0, 0, 1) 0%,
     /* Fully opaque at the top */ rgba(0, 0, 0, 1) 70%,
-    /* Stays opaque until 70% */ rgba(0, 0, 0, 0) 100% /* Fully transparent at the bottom */
+    /* Stays opaque until 70% */ rgba(0, 0, 0, 0) 100%
+      /* Fully transparent at the bottom */
   );
   -webkit-mask-image: linear-gradient(
     to bottom,

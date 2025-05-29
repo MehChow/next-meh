@@ -17,8 +17,9 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en">
-      <body className={tektur.className}>
-        {children} <Toaster />
+      <body className={`${tektur.className}`}>
+        <Toaster />
+        {children}
       </body>
     </html>
   );

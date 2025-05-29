@@ -17,7 +17,10 @@ const getErrorMessage = (error: any) => {
 };
 
 apiClient.interceptors.response.use(
-  (response) => response,
+  (response) => {
+    console.log(response);
+    return response;
+  },
   async (error) => {
     console.log(error.config);
     if (error.response) {
@@ -29,16 +32,23 @@ apiClient.interceptors.response.use(
       if (status === 400) {
         console.error("AXIOS 400 ERROR CAUGHT!!", errorMessage);
         return Promise.reject({ status, message: errorMessage });
-      } else if (status === 401 && errorMessage !== "INVALID_REFRESH_TOKEN") {
+      } else if (
+        status === 401 &&
+        errorMessage !== "INVALID_REFRESH_TOKEN" &&
+        !error.config._isRetry
+      ) {
         /* Handle 401 errors. If the error is not INVALID_REFRESH_TOKEN, attempt to refresh
          * the access token. Because if the refresh token is invalid, the user is not authorized */
-        console.log("AXIOS: You are UNAUTHORIZED!!! Attempting to refresh token...");
+        console.log(
+          "AXIOS: You are UNAUTHORIZED!!! Attempting to refresh token..."
+        );
 
         // Handle refresh access token for API request
         try {
           console.log("NOW GO REFRESH!!");
 
           const tokenResponse = await authApi.refreshAccessToken();
+          error.config._isRetry = true;
           if (!tokenResponse.accessToken) {
             console.log("AXIOS: Failed to refresh access token");
             return Promise.reject(error);

@@ -4,7 +4,6 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
 import { signInSchema, SignInSchema } from "@/schema/auth-schema";
 import { useRouter } from "next/navigation";
-
 import { Button } from "@/components/ui/button";
 import {
   Form,
@@ -30,14 +29,14 @@ export function SignInForm() {
     },
   });
 
+  // Proceed to login
   const onSubmit = async (values: SignInSchema) => {
     try {
       const response = await authService.login(values);
 
-      // accessToken exists in tokenResponse, meaning login was successful,
-      // proceed to set userInfo in Zustand store
-      if (response.tokenResponse.accessToken) {
-        setUser(response.userResponse);
+      // If login is successful, set userInfo in Zustand store
+      if (response.status === 200) {
+        setUser(response.data.userResponse);
         router.replace("/");
       }
     } catch (error) {

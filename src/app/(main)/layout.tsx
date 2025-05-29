@@ -14,13 +14,13 @@ export default function HomeLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <div className="min-h-lvh bg-black justify-center items-center flex flex-col">
+    <div className="min-h-[100vh] bg-black flex flex-col">
       <header className="flex items-center justify-center top-0 bg-transparent h-24 sticky w-full backdrop-blur-sm z-99">
         <Logo color="text-white" />
         <AuthBlock />
       </header>
 
-      <Background />
+      {/* <Background /> */}
       {children}
     </div>
   );
