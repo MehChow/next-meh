@@ -1,4 +1,3 @@
-import authApi from "@/services/auth-api";
 import axios from "axios";
 
 const apiClient = axios.create({
@@ -8,63 +7,30 @@ const apiClient = axios.create({
   headers: { "Content-Type": "application/json" },
 });
 
-const getErrorMessage = (error: any) => {
-  if (error.response && error.response.data) {
-    return error.response.data;
-  }
-
-  return "An unexpected error occurred. Please try again later.";
-};
-
 apiClient.interceptors.response.use(
-  (response) => {
-    console.log(response);
-    return response;
-  },
+  (response) => response,
   async (error) => {
-    console.log(error.config);
-    if (error.response) {
-      // get error info
-      const { status } = error.response;
-      const errorMessage = getErrorMessage(error);
+    const originalRequest = error.config;
 
-      // Handle 400 error cases:
-      if (status === 400) {
-        console.error("AXIOS 400 ERROR CAUGHT!!", errorMessage);
-        return Promise.reject({ status, message: errorMessage });
-      } else if (
-        status === 401 &&
-        errorMessage !== "INVALID_REFRESH_TOKEN" &&
-        !error.config._isRetry
-      ) {
-        /* Handle 401 errors. If the error is not INVALID_REFRESH_TOKEN, attempt to refresh
-         * the access token. Because if the refresh token is invalid, the user is not authorized */
-        console.log(
-          "AXIOS: You are UNAUTHORIZED!!! Attempting to refresh token..."
+    // If error is 401 and we haven't tried to refresh token yet
+    if (error.response?.status === 401 && !originalRequest._retry) {
+      originalRequest._retry = true;
+
+      try {
+        // Try to refresh the token
+        await axios.post(
+          `${process.env.NEXT_PUBLIC_API_BASE_URL}/api/auth/refresh-token`,
+          {},
+          { withCredentials: true }
         );
 
-        // Handle refresh access token for API request
-        try {
-          console.log("NOW GO REFRESH!!");
-
-          const tokenResponse = await authApi.refreshAccessToken();
-          error.config._isRetry = true;
-          if (!tokenResponse.accessToken) {
-            console.log("AXIOS: Failed to refresh access token");
-            return Promise.reject(error);
-          }
-
-          // If success, retry the request
-          console.log("AXIOS: Refreshed access token, now retry request");
-          return apiClient.request(error.config);
-        } catch (refreshError) {
-          console.error("AXIOS: Refresh token failed:", refreshError);
-          return Promise.reject(refreshError);
-        }
+        // Retry the original request
+        return apiClient(originalRequest);
+      } catch (refreshError) {
+        // Refresh Token api call failed, due to invalid or missing refresh token
+        window.location.href = "/auth?tab=Login&error=session_expired";
       }
     }
-
-    return Promise.reject(error);
   }
 );
 

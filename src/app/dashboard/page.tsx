@@ -1,16 +1,19 @@
 "use client";
 
-import { Button } from "@/components/ui/button";
-import useUserStore from "@/store/user-store";
+import authApi from "@/services/auth-api";
+import { useEffect } from "react";
 
 export function DashboardPage() {
-  const { fetchUser, user } = useUserStore();
+  const checkAuth = async () => {
+    const response = await authApi.getUser();
+    console.log(response);
+  };
 
-  return (
-    <div className="flex items-center justify-center h-screen">
-      <Button onClick={async () => await fetchUser()}>Test GetUser API</Button>
-    </div>
-  );
+  useEffect(() => {
+    checkAuth();
+  }, []);
+
+  return <div className="flex items-center justify-center h-screen"></div>;
 }
 
 export default DashboardPage;

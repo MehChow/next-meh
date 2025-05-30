@@ -16,7 +16,6 @@ import {
 } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
 import authService from "@/services/auth-api";
-import useUserStore from "@/store/user-store";
 
 export function SignUpForm() {
   const router = useRouter();
@@ -37,7 +36,6 @@ export function SignUpForm() {
       const response = await authService.register({ username, password });
 
       if (response.tokenResponse.accessToken) {
-        setUser(response.userResponse);
         router.replace("/");
       }
     } catch (error) {
@@ -73,7 +71,10 @@ export function SignUpForm() {
             <FormItem>
               <FormLabel className="text-white">Password</FormLabel>
               <FormControl>
-                <Input {...field} className="caret-white text-white border-slate-800" />
+                <Input
+                  {...field}
+                  className="caret-white text-white border-slate-800"
+                />
               </FormControl>
               <FormMessage />
             </FormItem>
@@ -87,7 +88,10 @@ export function SignUpForm() {
             <FormItem>
               <FormLabel className="text-white">Confirm Password</FormLabel>
               <FormControl>
-                <Input {...field} className="caret-white text-white border-slate-800" />
+                <Input
+                  {...field}
+                  className="caret-white text-white border-slate-800"
+                />
               </FormControl>
               <FormMessage />
             </FormItem>

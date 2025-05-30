@@ -15,11 +15,9 @@ import {
 } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
 import authService from "@/services/auth-api";
-import useUserStore from "@/store/user-store";
 
 export function SignInForm() {
   const router = useRouter();
-  const { setUser } = useUserStore();
 
   const form = useForm<SignInSchema>({
     resolver: zodResolver(signInSchema),
@@ -36,7 +34,6 @@ export function SignInForm() {
 
       // If login is successful, set userInfo in Zustand store
       if (response.status === 200) {
-        setUser(response.data.userResponse);
         router.replace("/");
       }
     } catch (error) {

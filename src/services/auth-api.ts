@@ -1,5 +1,5 @@
 import apiClient from "@/lib/axios";
-import { AuthRequest, AuthResponse, RefreshTokenResponse } from "@/types/auth";
+import { AuthRequest, AuthResponse } from "@/types/auth";
 // AxiosResponse is for accessing the normal response data like status
 import { AxiosResponse } from "axios";
 
@@ -20,21 +20,9 @@ const authApi = {
     const response = await apiClient.post("/api/auth/logout");
     return response.data;
   },
-  refreshAccessToken: async (
-    refreshToken?: string
-  ): Promise<RefreshTokenResponse> => {
-    const headers: Record<string, string> = {};
-
-    if (refreshToken) {
-      headers["Cookie"] = `refreshToken=${refreshToken}`;
-    }
-
-    const response = await apiClient.post(
-      "/api/auth/refresh-token",
-      undefined,
-      { headers }
-    );
-    return response.data;
+  refreshAccessToken: async () => {
+    const response = await apiClient.post("/api/auth/refresh-token");
+    return response.status === 200;
   },
   getUser: async () => {
     const response = await apiClient.get("/api/auth/get-userinfo");

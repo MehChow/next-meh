@@ -23,57 +23,73 @@ export function AuthBlock() {
     router.replace("/");
   };
 
-  if (user) {
-    return (
-      <div className="absolute right-0 pr-6 flex gap-8 text-white">
-        <Link
-          href="/dashboard"
-          className="hover:opacity-80 transition flex items-center gap-2"
-        >
-          {user.username}
-        </Link>
+  return (
+    <div className="absolute right-0 pr-6 flex gap-8 text-white">
+      <Link
+        href="/auth?tab=Login"
+        className="hover:opacity-80 transition flex items-center gap-2"
+      >
+        <LogIn />
+        Login
+      </Link>
 
-        <AlertDialog>
-          <AlertDialogTrigger className="hover:opacity-80 transition flex items-center gap-2 cursor-pointer">
-            <LogOut />
-            Logout
-          </AlertDialogTrigger>
+      <Link href="/auth?tab=Register" className="hover:opacity-80 transition">
+        Register
+      </Link>
+    </div>
+  );
 
-          <AlertDialogContent>
-            <AlertDialogHeader>
-              <AlertDialogTitle>
-                Are you sure you want to logout?
-              </AlertDialogTitle>
-            </AlertDialogHeader>
-            <AlertDialogFooter>
-              <AlertDialogCancel>Cancel</AlertDialogCancel>
-              <AlertDialogAction onClick={handleLogout}>
-                Logout
-              </AlertDialogAction>
-            </AlertDialogFooter>
-          </AlertDialogContent>
-        </AlertDialog>
-      </div>
-    );
-  }
-  // If user is not logged in, show login and register buttons
-  else {
-    return (
-      <div className="absolute right-0 pr-6 flex gap-8 text-white">
-        <Link
-          href="/auth?tab=Login"
-          className="hover:opacity-80 transition flex items-center gap-2"
-        >
-          <LogIn />
-          Login
-        </Link>
+  // if (user) {
+  //   return (
+  //     <div className="absolute right-0 pr-6 flex gap-8 text-white">
+  //       <Link
+  //         href="/dashboard"
+  //         className="hover:opacity-80 transition flex items-center gap-2"
+  //       >
+  //         {user.username}
+  //       </Link>
 
-        <Link href="/auth?tab=Register" className="hover:opacity-80 transition">
-          Register
-        </Link>
-      </div>
-    );
-  }
+  //       <AlertDialog>
+  //         <AlertDialogTrigger className="hover:opacity-80 transition flex items-center gap-2 cursor-pointer">
+  //           <LogOut />
+  //           Logout
+  //         </AlertDialogTrigger>
+
+  //         <AlertDialogContent>
+  //           <AlertDialogHeader>
+  //             <AlertDialogTitle>
+  //               Are you sure you want to logout?
+  //             </AlertDialogTitle>
+  //           </AlertDialogHeader>
+  //           <AlertDialogFooter>
+  //             <AlertDialogCancel>Cancel</AlertDialogCancel>
+  //             <AlertDialogAction onClick={handleLogout}>
+  //               Logout
+  //             </AlertDialogAction>
+  //           </AlertDialogFooter>
+  //         </AlertDialogContent>
+  //       </AlertDialog>
+  //     </div>
+  //   );
+  // }
+  // // If user is not logged in, show login and register buttons
+  // else {
+  //   return (
+  //     <div className="absolute right-0 pr-6 flex gap-8 text-white">
+  //       <Link
+  //         href="/auth?tab=Login"
+  //         className="hover:opacity-80 transition flex items-center gap-2"
+  //       >
+  //         <LogIn />
+  //         Login
+  //       </Link>
+
+  //       <Link href="/auth?tab=Register" className="hover:opacity-80 transition">
+  //         Register
+  //       </Link>
+  //     </div>
+  //   );
+  // }
 }
 
 export default AuthBlock;
