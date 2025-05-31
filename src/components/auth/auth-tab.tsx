@@ -7,18 +7,24 @@ import SignUpCard from "@/components/auth/sign-up-card";
 import { useEffect } from "react";
 import { toast } from "sonner";
 
-export function AuthTab({
-  defaultTab,
-  error,
-}: {
+interface AuthTabProps {
   defaultTab: string;
-  error: string | undefined;
-}) {
+  error?: string | undefined;
+  returnUrl?: string;
+}
+
+export function AuthTab({ defaultTab, error, returnUrl }: AuthTabProps) {
   const router = useRouter();
 
   const handleTabChange = (value: string) => {
+    // Preserve returnUrl when changing tabs
+    const queryParams = new URLSearchParams();
+    queryParams.set("tab", value);
+    if (returnUrl) {
+      queryParams.set("returnUrl", returnUrl);
+    }
     // Update the URL with the new tab value
-    router.replace(`/auth?tab=${value}`, { scroll: false });
+    router.replace(`/auth?${queryParams.toString()}`, { scroll: false });
   };
 
   useEffect(() => {
@@ -39,11 +45,11 @@ export function AuthTab({
       </TabsList>
 
       <TabsContent value="Login">
-        <SignInCard />
+        <SignInCard returnUrl={returnUrl} />
       </TabsContent>
 
       <TabsContent value="Register">
-        <SignUpCard />
+        <SignUpCard returnUrl={returnUrl} />
       </TabsContent>
     </Tabs>
   );

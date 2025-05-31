@@ -12,9 +12,9 @@ const authApi = {
     const response = await apiClient.get("/api/auth");
     return response.status === 200;
   },
-  register: async (data: AuthRequest): Promise<AuthResponse> => {
+  register: async (data: AuthRequest): Promise<AxiosResponse<AuthResponse>> => {
     const response = await apiClient.post("/api/auth/register", data);
-    return response.data;
+    return response;
   },
   logout: async () => {
     const response = await apiClient.post("/api/auth/logout");

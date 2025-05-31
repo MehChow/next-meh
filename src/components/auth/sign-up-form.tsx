@@ -15,11 +15,14 @@ import {
   FormMessage,
 } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
-import authService from "@/services/auth-api";
+import authApi from "@/services/auth-api";
 
-export function SignUpForm() {
+interface SignUpFormProps {
+  returnUrl?: string;
+}
+
+export function SignUpForm({ returnUrl }: SignUpFormProps) {
   const router = useRouter();
-  const { setUser } = useUserStore();
 
   const form = useForm<SignUpSchema>({
     resolver: zodResolver(signUpSchema),
@@ -33,10 +36,15 @@ export function SignUpForm() {
   const onSubmit = async (values: SignUpSchema) => {
     try {
       const { username, password } = values;
-      const response = await authService.register({ username, password });
+      const response = await authApi.register({ username, password });
 
-      if (response.tokenResponse.accessToken) {
-        router.replace("/");
+      if (response.status === 200) {
+        // Redirect to returnUrl if it exists, otherwise go to home
+        if (returnUrl) {
+          router.replace(decodeURIComponent(returnUrl));
+        } else {
+          router.replace("/");
+        }
       }
     } catch (error) {
       console.log("REGISTER FAILED!!!", error);
