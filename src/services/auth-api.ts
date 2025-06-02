@@ -29,6 +29,10 @@ const authApi = {
     const response = await apiClient.get("/api/auth/get-userinfo");
     return response;
   },
+  googleLogin: async (code: string) => {
+    const response = await apiClient.post("/api/auth/google", { code });
+    return response;
+  },
 };
 
 export default authApi;
