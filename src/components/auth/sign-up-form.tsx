@@ -16,6 +16,7 @@ import {
 } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
 import authApi from "@/services/auth-api";
+import { useAuth } from "@/contexts/auth-context";
 
 interface SignUpFormProps {
   returnUrl?: string;
@@ -23,6 +24,7 @@ interface SignUpFormProps {
 
 export function SignUpForm({ returnUrl }: SignUpFormProps) {
   const router = useRouter();
+  const { setUser } = useAuth();
 
   const form = useForm<SignUpSchema>({
     resolver: zodResolver(signUpSchema),
@@ -39,6 +41,9 @@ export function SignUpForm({ returnUrl }: SignUpFormProps) {
       const response = await authApi.register({ username, password });
 
       if (response.status === 200) {
+        // Update the auth context with user data
+        setUser(response.data);
+
         // Redirect to returnUrl if it exists, otherwise go to home
         if (returnUrl) {
           router.replace(decodeURIComponent(returnUrl));

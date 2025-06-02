@@ -3,12 +3,12 @@
 import { createContext, useContext, useEffect, useState } from "react";
 import { usePathname, useRouter } from "next/navigation";
 import authApi from "@/services/auth-api";
-import { AuthResponse } from "@/types/auth";
 import { PROTECTED_ROUTES } from "@/constant/Routes";
+import { User } from "@/types/auth";
 
 interface AuthContextType {
-  user: AuthResponse | null;
-  setUser: (user: AuthResponse | null) => void;
+  user: User | null;
+  setUser: (user: User | null) => void;
   isLoading: boolean;
   logout: () => Promise<void>;
 }
@@ -18,7 +18,7 @@ const AuthContext = createContext<AuthContextType | undefined>(undefined);
 // List of public routes that don't require authentication
 
 export function AuthProvider({ children }: { children: React.ReactNode }) {
-  const [user, setUser] = useState<AuthResponse | null>(null);
+  const [user, setUser] = useState<User | null>(null);
   const [isLoading, setIsLoading] = useState(true);
   const router = useRouter();
   const pathname = usePathname();
@@ -28,8 +28,11 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     const checkAuth = async () => {
       try {
         // User is already logged in, access token is valid
-        const userData = await authApi.getUser();
-        setUser(userData);
+        const response = await authApi.getUser();
+
+        if (response.status === 200) {
+          setUser(response.data);
+        }
       } catch (error) {
         // User is not logged in, access token is invalid
         setUser(null);

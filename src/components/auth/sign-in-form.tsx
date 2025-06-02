@@ -45,7 +45,6 @@ export function SignInForm({ returnUrl }: SignInFormProps) {
 
         // Redirect to returnUrl if it exists, otherwise go to home
         if (returnUrl) {
-          console.log(returnUrl);
           router.replace(decodeURIComponent(returnUrl));
         } else {
           router.replace("/");
