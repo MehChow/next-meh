@@ -15,9 +15,15 @@ import {
 } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
 import authService from "@/services/auth-api";
+import { useAuth } from "@/contexts/auth-context";
 
-export function SignInForm() {
+interface SignInFormProps {
+  returnUrl?: string;
+}
+
+export function SignInForm({ returnUrl }: SignInFormProps) {
   const router = useRouter();
+  const { setUser } = useAuth();
 
   const form = useForm<SignInSchema>({
     resolver: zodResolver(signInSchema),
@@ -34,7 +40,15 @@ export function SignInForm() {
 
       // If login is successful, set userInfo in Zustand store
       if (response.status === 200) {
-        router.replace("/");
+        // Update the auth context with user data
+        setUser(response.data);
+
+        // Redirect to returnUrl if it exists, otherwise go to home
+        if (returnUrl) {
+          router.replace(decodeURIComponent(returnUrl));
+        } else {
+          router.replace("/");
+        }
       }
     } catch (error) {
       console.log("LOGIN FAILED!!!", error);

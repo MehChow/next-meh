@@ -1,12 +1,12 @@
 import { NextResponse } from "next/server";
 import type { NextRequest } from "next/server";
+import { PUBLIC_ROUTES } from "@/constant/Routes";
 
 export async function middleware(request: NextRequest) {
   const pathname = request.nextUrl.pathname;
-  const publicRoutes = ["/", "/auth"];
 
   // Public routes, no need to check for authentication
-  if (publicRoutes.includes(pathname)) {
+  if (PUBLIC_ROUTES.includes(pathname)) {
     return NextResponse.next();
   }
 
@@ -16,7 +16,10 @@ export async function middleware(request: NextRequest) {
 
   // If both tokens are missing, redirect to login
   if (!accessToken && !refreshToken) {
-    return NextResponse.redirect(new URL("/auth?tab=Login", request.url));
+    const returnUrl = encodeURIComponent(request.url);
+    return NextResponse.redirect(
+      new URL(`/auth?tab=Login&returnUrl=${returnUrl}`, request.url)
+    );
   }
 
   // If at least one token exists, let the axios interceptor handle the rest

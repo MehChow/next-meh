@@ -3,10 +3,14 @@ import Separator from "./shared/separator";
 import SocialLogin from "./shared/social-login";
 import SignUpForm from "./sign-up-form";
 
-export function SignUpCard() {
+interface SignUpCardProps {
+  returnUrl?: string;
+}
+
+export function SignUpCard({ returnUrl }: SignUpCardProps) {
   return (
     <CardWrapper title="Sign Up" gradient="signup-card">
-      <SignUpForm />
+      <SignUpForm returnUrl={returnUrl} />
       <Separator />
       <SocialLogin />
     </CardWrapper>
