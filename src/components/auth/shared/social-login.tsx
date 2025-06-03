@@ -1,20 +1,13 @@
-import { Button } from "@/components/ui/button";
-import GoogleIcon from "../../../../public/svg/google";
-import GithubIcon from "../../../../public/svg/github";
+import GoogleAuthButton from "./google-auth-button";
 
-export function SocialLogin() {
+interface SocialLoginProps {
+  returnUrl?: string;
+}
+
+export function SocialLogin({ returnUrl }: SocialLoginProps) {
   return (
     <div className="flex justify-between">
-      <Button className="w-[48%] cursor-pointer bg-gradient-to-b from-violet-300 to-slate-200 text-black font-bold hover:opacity-90 hover:scale-105">
-        <GoogleIcon />
-        Google
-      </Button>
-      <Button className="w-[48%] cursor-pointer bg-gradient-to-b from-violet-300 to-slate-200 text-black font-bold hover:opacity-90 hover:scale-105">
-        <div className="flex items-center bg-white rounded-full">
-          <GithubIcon />
-        </div>
-        Github
-      </Button>
+      <GoogleAuthButton returnUrl={returnUrl} />
     </div>
   );
 }

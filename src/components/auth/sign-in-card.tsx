@@ -12,7 +12,7 @@ export function SignInCard({ returnUrl }: SignInCardProps) {
     <CardWrapper title="Sign In" gradient="signin-card">
       <SignInForm returnUrl={returnUrl} />
       <Separator />
-      <SocialLogin />
+      <SocialLogin returnUrl={returnUrl} />
     </CardWrapper>
   );
 }

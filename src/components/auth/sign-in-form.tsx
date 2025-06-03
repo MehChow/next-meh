@@ -14,8 +14,10 @@ import {
   FormMessage,
 } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
-import authService from "@/services/auth-api";
 import { useAuth } from "@/contexts/auth-context";
+import authApi from "@/services/auth-api";
+import { AuthErrorType } from "@/types/auth";
+import { toast } from "sonner";
 
 interface SignInFormProps {
   returnUrl?: string;
@@ -28,7 +30,7 @@ export function SignInForm({ returnUrl }: SignInFormProps) {
   const form = useForm<SignInSchema>({
     resolver: zodResolver(signInSchema),
     defaultValues: {
-      username: "",
+      email: "",
       password: "",
     },
   });
@@ -36,22 +38,29 @@ export function SignInForm({ returnUrl }: SignInFormProps) {
   // Proceed to login
   const onSubmit = async (values: SignInSchema) => {
     try {
-      const response = await authService.login(values);
+      const response = await authApi.login(values);
 
       // If login is successful, set userInfo in Zustand store
-      if (response.status === 200) {
-        // Update the auth context with user data
-        setUser(response.data);
+      setUser(response.data);
 
-        // Redirect to returnUrl if it exists, otherwise go to home
-        if (returnUrl) {
-          router.replace(decodeURIComponent(returnUrl));
-        } else {
-          router.replace("/");
-        }
+      // Redirect to returnUrl if it exists, otherwise go to home
+      if (returnUrl) {
+        router.replace(decodeURIComponent(returnUrl));
+      } else {
+        router.replace("/");
       }
     } catch (error) {
-      console.log("LOGIN FAILED!!!", error);
+      const authError = error as AuthErrorType;
+      switch (authError.code) {
+        case "INVALID_CREDENTIALS":
+          toast.error("Invalid email or password");
+          break;
+        case "NETWORK_ERROR":
+          toast.error("Please check your internet connection");
+          break;
+        default:
+          toast.error(authError.message);
+      }
     }
   };
 
@@ -60,14 +69,14 @@ export function SignInForm({ returnUrl }: SignInFormProps) {
       <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-8">
         <FormField
           control={form.control}
-          name="username"
+          name="email"
           render={({ field }) => (
             <FormItem>
-              <FormLabel className="text-white">Username</FormLabel>
+              <FormLabel className="text-white">Email</FormLabel>
               <FormControl>
                 <Input
                   {...field}
-                  placeholder="Jane0604"
+                  placeholder="jane0604@gmail.com"
                   className="caret-white text-white border-slate-800"
                 />
               </FormControl>

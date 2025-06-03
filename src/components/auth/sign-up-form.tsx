@@ -17,6 +17,8 @@ import {
 import { Input } from "@/components/ui/input";
 import authApi from "@/services/auth-api";
 import { useAuth } from "@/contexts/auth-context";
+import { AuthErrorType } from "@/types/auth";
+import { toast } from "sonner";
 
 interface SignUpFormProps {
   returnUrl?: string;
@@ -29,7 +31,7 @@ export function SignUpForm({ returnUrl }: SignUpFormProps) {
   const form = useForm<SignUpSchema>({
     resolver: zodResolver(signUpSchema),
     defaultValues: {
-      username: "",
+      email: "",
       password: "",
       confirmPassword: "",
     },
@@ -37,22 +39,30 @@ export function SignUpForm({ returnUrl }: SignUpFormProps) {
 
   const onSubmit = async (values: SignUpSchema) => {
     try {
-      const { username, password } = values;
-      const response = await authApi.register({ username, password });
+      const { email, password } = values;
+      const response = await authApi.register({ email, password });
 
-      if (response.status === 200) {
-        // Update the auth context with user data
-        setUser(response.data);
+      // If registration is successful, set userInfo in Zustand store
+      setUser(response.data);
 
-        // Redirect to returnUrl if it exists, otherwise go to home
-        if (returnUrl) {
-          router.replace(decodeURIComponent(returnUrl));
-        } else {
-          router.replace("/");
-        }
+      // Redirect to returnUrl if it exists, otherwise go to home
+      if (returnUrl) {
+        router.replace(decodeURIComponent(returnUrl));
+      } else {
+        router.replace("/");
       }
     } catch (error) {
-      console.log("REGISTER FAILED!!!", error);
+      const authError = error as AuthErrorType;
+      switch (authError.code) {
+        case "EMAIL_IN_USE":
+          toast.error("Email already in use");
+          break;
+        case "NETWORK_ERROR":
+          toast.error("Please check your internet connection");
+          break;
+        default:
+          toast.error(authError.message);
+      }
     }
   };
 
@@ -61,14 +71,14 @@ export function SignUpForm({ returnUrl }: SignUpFormProps) {
       <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-8">
         <FormField
           control={form.control}
-          name="username"
+          name="email"
           render={({ field }) => (
             <FormItem>
-              <FormLabel className="text-white">Username</FormLabel>
+              <FormLabel className="text-white">Email</FormLabel>
               <FormControl>
                 <Input
                   {...field}
-                  placeholder="Jane0604"
+                  placeholder="jane0604@gmail.com"
                   className="caret-white text-white border-slate-800"
                 />
               </FormControl>
