@@ -13,6 +13,13 @@ let isRefreshing = false;
 // Queue to store pending requests
 let failedQueue: any[] = [];
 
+// List of endpoints that should not trigger refresh token
+const EXCLUDED_ENDPOINTS = [
+  "/api/auth/login",
+  "/api/auth/register",
+  "/api/auth/refresh-token",
+];
+
 const processQueue = (error: any, token: string | null = null) => {
   failedQueue.forEach((prom) => {
     if (error) {
@@ -28,9 +35,19 @@ apiClient.interceptors.response.use(
   (response) => response,
   async (error) => {
     const originalRequest = error.config;
+    const requestUrl = originalRequest.url;
+
+    // Check if the request URL is in the excluded list
+    const shouldSkipRefresh = EXCLUDED_ENDPOINTS.some((endpoint) =>
+      requestUrl.includes(endpoint)
+    );
 
     // If error is 401 and we haven't tried to refresh token yet
-    if (error.response?.status === 401 && !originalRequest._retry) {
+    if (
+      error.response?.status === 401 &&
+      !originalRequest._retry &&
+      !shouldSkipRefresh
+    ) {
       if (isRefreshing) {
         // If refresh is in progress, queue the request
         return new Promise((resolve, reject) => {

@@ -3,7 +3,7 @@
 import { createContext, useContext, useEffect, useState } from "react";
 import { usePathname, useRouter } from "next/navigation";
 import authApi from "@/services/auth-api";
-import { PROTECTED_ROUTES } from "@/constant/Routes";
+import { AUTH_ROUTES, PROTECTED_ROUTES } from "@/constant/Routes";
 import { User } from "@/types/auth";
 
 interface AuthContextType {
@@ -11,6 +11,7 @@ interface AuthContextType {
   setUser: (user: User | null) => void;
   isLoading: boolean;
   logout: () => Promise<void>;
+  checkAuth: () => Promise<void>;
 }
 
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
@@ -23,31 +24,32 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   const router = useRouter();
   const pathname = usePathname();
 
-  // Check initial auth state
-  useEffect(() => {
-    const checkAuth = async () => {
-      try {
-        // User is already logged in, access token is valid
-        const response = await authApi.getUser();
-
-        if (response.status === 200) {
-          setUser(response.data);
-        }
-      } catch (error) {
-        // User is not logged in, access token is invalid
-        setUser(null);
-        // Only redirect if trying to access protected route
-        if (PROTECTED_ROUTES.some((route) => pathname?.startsWith(route))) {
-          const returnUrl = encodeURIComponent(pathname);
-          router.push(`/auth?tab=Login&returnUrl=${returnUrl}`);
-        }
-      } finally {
-        setIsLoading(false);
+  const checkAuth = async () => {
+    try {
+      // User is already logged in, access token is valid
+      const response = await authApi.getUser();
+      setUser(response.data);
+    } catch (error) {
+      // User is not logged in, access token is invalid
+      setUser(null);
+      // Only redirect if trying to access protected route
+      if (PROTECTED_ROUTES.some((route) => pathname?.startsWith(route))) {
+        const returnUrl = encodeURIComponent(pathname);
+        router.push(`/auth?tab=Login&returnUrl=${returnUrl}`);
       }
-    };
+    } finally {
+      setIsLoading(false);
+    }
+  };
 
-    checkAuth();
-  }, []);
+  // Only run the initial auth check if we're on a protected route
+  useEffect(() => {
+    if (!AUTH_ROUTES.some((route) => pathname?.startsWith(route))) {
+      checkAuth();
+    } else {
+      setIsLoading(false);
+    }
+  }, [pathname]);
 
   const logout = async () => {
     try {
@@ -63,7 +65,9 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   };
 
   return (
-    <AuthContext.Provider value={{ user, setUser, isLoading, logout }}>
+    <AuthContext.Provider
+      value={{ user, setUser, isLoading, logout, checkAuth }}
+    >
       {children}
     </AuthContext.Provider>
   );

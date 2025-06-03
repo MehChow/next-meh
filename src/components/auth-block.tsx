@@ -8,6 +8,7 @@ import {
   AlertDialogAction,
   AlertDialogCancel,
   AlertDialogContent,
+  AlertDialogDescription,
   AlertDialogFooter,
   AlertDialogHeader,
   AlertDialogTitle,
@@ -59,11 +60,18 @@ export function AuthBlock() {
         </AlertDialogTrigger>
 
         <AlertDialogContent>
+          {/* This is for screen readers */}
+          <AlertDialogDescription className="sr-only">
+            This action will log you out of your account and you will need to
+            login again.
+          </AlertDialogDescription>
+
           <AlertDialogHeader>
             <AlertDialogTitle>
               Are you sure you want to logout?
             </AlertDialogTitle>
           </AlertDialogHeader>
+
           <AlertDialogFooter>
             <AlertDialogCancel>Cancel</AlertDialogCancel>
             <AlertDialogAction onClick={logout}>Logout</AlertDialogAction>

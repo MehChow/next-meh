@@ -2,9 +2,21 @@ export interface User {
   id: string;
   role: "User" | "Admin";
   username: string;
+  email: string;
 }
 
 export interface AuthRequest {
-  username: string;
+  email: string;
   password: string;
 }
+
+export interface AuthResponse<T> {
+  data: T;
+  status: number;
+}
+
+export type AuthErrorType = {
+  message: string;
+  code: string;
+  statusCode?: number;
+};
