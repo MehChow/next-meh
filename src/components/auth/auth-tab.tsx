@@ -36,7 +36,7 @@ export function AuthTab({ defaultTab, error, returnUrl }: AuthTabProps) {
   return (
     <Tabs
       defaultValue={defaultTab}
-      className="fixed w-[600px]"
+      className="fixed max-w-[600px] min-w-[400px] w-[400px] sm:w-[600px] transition-all duration-300"
       onValueChange={handleTabChange}
     >
       <TabsList className="w-full mb-2 bg-slate-300">
