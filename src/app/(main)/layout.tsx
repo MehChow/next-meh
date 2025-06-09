@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import Logo from "@/components/logo";
 import AuthBlock from "@/components/auth-block";
 import Background from "@/components/main/background";
+import NavigationBar from "@/components/navigation-bar";
 
 export const metadata: Metadata = {
   title: "Create Next App",
@@ -17,6 +18,7 @@ export default function HomeLayout({
     <div className="min-h-[100vh] bg-black flex flex-col">
       <header className="flex items-center justify-center top-0 bg-transparent h-24 sticky w-full backdrop-blur-sm z-99">
         <Logo color="text-white" />
+        <NavigationBar />
         <AuthBlock />
       </header>
 
